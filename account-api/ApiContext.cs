@@ -16,7 +16,9 @@ namespace account_api
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Account>().HasAlternateKey(a => a.AccountNumber);
+            modelBuilder.Entity<Account>().HasIndex(x => x.AccountNumber).IsUnique();
+            modelBuilder.Entity<Resident>().HasIndex(x => x.DocumentID).IsUnique();
+            //modelBuilder.Entity<Account>().HasIndex(x => x.Address);
         }
     }
 }

@@ -7,11 +7,10 @@ namespace account_api.Models
     public class Account
     {
         public int Id { get; set; }
-        
+        [Required]
         public string AccountNumber { get; set; }
         [Required]
-        public DateTime OpenDate { get; set; }
-        [Required]
+        public DateTime OpenDate { get; set; }        
         public DateTime CloseDate { get; set; }
         [Required]
         public string Address { get; set; }
