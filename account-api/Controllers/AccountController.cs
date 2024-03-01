@@ -46,7 +46,10 @@ namespace account_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAccount(int id, AccountData updateAccountData)
         {
-            var accountCheckResult = await AccountDataIsGood(updateAccountData, true);
+            if (!AccountExists(id))            
+                return NotFound();            
+
+            var accountCheckResult = await ValidateAccount(updateAccountData, true);
             if (!accountCheckResult.Item1)
                 return BadRequest(accountCheckResult.Item2);
 
@@ -58,22 +61,8 @@ namespace account_api.Controllers
             updatingAccount.SpaceArea = updateAccountData.SpaceArea;
 
             //_context.Entry(newAccount).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AccountExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            
+            await _context.SaveChangesAsync();           
 
             return NoContent();
         }
@@ -83,7 +72,7 @@ namespace account_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Account>> PostAccount(AccountData newAccountData)
         {
-            var accountCheckResult = await AccountDataIsGood(newAccountData, false);
+            var accountCheckResult = await ValidateAccount(newAccountData, false);
             if (!accountCheckResult.Item1)
                 return BadRequest(accountCheckResult.Item2);
 
@@ -122,7 +111,7 @@ namespace account_api.Controllers
             return _context.Accounts.Any(e => e.Id == id);
         }
 
-        private async Task<(bool, List<string>)> AccountDataIsGood(AccountData accountData, bool isUpdate)
+        private async Task<(bool, List<string>)> ValidateAccount(AccountData accountData, bool isUpdate)
         {
             var messages = new List<string>();
             bool result = true;
