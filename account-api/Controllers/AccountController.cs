@@ -46,8 +46,8 @@ namespace account_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAccount(int id, AccountData updateAccountData)
         {
-            if (!AccountExists(id))            
-                return NotFound();            
+            if (!AccountExists(id))
+                return NotFound();
 
             var accountCheckResult = await ValidateAccount(updateAccountData, true);
             if (!accountCheckResult.Item1)
@@ -61,8 +61,8 @@ namespace account_api.Controllers
             updatingAccount.SpaceArea = updateAccountData.SpaceArea;
 
             //_context.Entry(newAccount).State = EntityState.Modified;
-            
-            await _context.SaveChangesAsync();           
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -88,6 +88,28 @@ namespace account_api.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetAccount", new { id = newAccount.Id }, newAccount);
+        }
+
+        [HttpPost("add-residents")]    
+        public async Task<IActionResult> AddResidentsToAccount(int accountID, List<int> residentsIDs)
+        {
+            var account = await _context.Accounts.Include(a => a.Residents).FirstOrDefaultAsync(a => a.Id == accountID);
+
+            if (account == null)
+                return NotFound("Account are not exist");
+            if (account.Residents == null)
+                account.Residents = new List<Resident>();
+
+            foreach (var residentID in residentsIDs.Distinct())
+            {                
+                var resident = await _context.Residents.FindAsync(residentID);
+                if (resident != null)
+                    account.Residents.Add(resident);    
+            }
+
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
         // DELETE: api/Account/5
