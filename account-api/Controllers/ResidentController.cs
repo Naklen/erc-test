@@ -1,13 +1,11 @@
-﻿using System;
+﻿using account_api.Models;
+using account_api.Utils;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using account_api;
-using account_api.Models;
-using account_api.Utils;
 
 namespace account_api.Controllers
 {
@@ -48,8 +46,8 @@ namespace account_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutResident(int id, ResidentData updateResidentData)
         {
-            if (!ResidentExists(id))           
-                return NotFound();            
+            if (!ResidentExists(id))
+                return NotFound();
 
             var residentCheckResult = await ValidateResident(updateResidentData, id);
             if (!residentCheckResult.Item1)
@@ -61,9 +59,9 @@ namespace account_api.Controllers
             updatingResident.Firstname = updateResidentData.Firstname;
             updatingResident.Lastname = updateResidentData.Lastname;
             updatingResident.Surname = updateResidentData.Surname;
-            updatingResident.BirthDate  = updateResidentData.BirthDate;           
-            
-            await _context.SaveChangesAsync();            
+            updatingResident.BirthDate = updateResidentData.BirthDate;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

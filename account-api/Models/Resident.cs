@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace account_api.Models
@@ -8,7 +7,7 @@ namespace account_api.Models
     {
         public int Id { get; set; }
         [Required]
-        public string DocumentID{ get; set; }
+        public string DocumentID { get; set; }
         [Required]
         public string Firstname { get; set; }
         [Required]
